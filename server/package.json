@@ -1,0 +1,14 @@
+{
+  "name": "chat-openai",
+  "version": "1.0.0",
+  "main": "src/index.js",
+  "scripts": {
+    "run": "node ."
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "fastify": "^4.13.0",
+    "openai": "^3.1.0"
+  }
+}
