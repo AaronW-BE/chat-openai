@@ -1,16 +1,22 @@
 page {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
     height: 100vh;
 }
 
 page .navbar {
+    height: 80rpx;
+    display: flex;
+    align-items: center;
+    padding-top: 30rpx;
+    padding-left: 20rpx;
 }
 
-page .page-content {
+.page-content {
     flex: 1;
-    background-color: beige;
+    height: 0;
+    overflow-y: scroll;
+    background-color: #fff;
 }
 
 .chat-container {

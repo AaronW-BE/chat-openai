@@ -1,4 +1,4 @@
-<view class="navbar" style="height: 80rpx; display: flex; align-items: center; padding-top: 40rpx; ">Chatting with AI</view>
+<view class="navbar">Chatting with AI</view>
 <view class="page-content">
     <view class="chat-container">
         <view class="chat-content">
@@ -6,9 +6,10 @@
                 <view class="chat-bullet">{{item.text}}</view>
             </view>
         </view>
-        <view class="chat-panel">
-            <input type="text" bindinput="handleInput" value="{{inputText}}" />
-            <view class="btn btn-send" bindtap="bindSend">Send</view>
-        </view>
     </view>
+</view>
+
+<view class="chat-panel">
+    <input type="text" bindinput="handleInput" value="{{inputText}}" />
+    <view class="btn btn-send" bindtap="bindSend">Send</view>
 </view>

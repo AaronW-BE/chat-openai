@@ -12,6 +12,7 @@ const chatConfiguration = new Configuration({
 const start = async () => {
   try {
     await fastify.listen({
+      host: "0.0.0.0",
       port: 3000
     });
   } catch (e) {

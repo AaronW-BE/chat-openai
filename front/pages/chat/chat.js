@@ -7,14 +7,15 @@ Page({
 
   },
   handleInput(e) {
-    if (this.data.inputText !== e.detail.value) {
-      this.setData({
-        inputText: e.detail.value
-      })
-    }
+    this.setData({
+      inputText: e.detail.value
+    })
   },
   bindSend(e) {
-    console.log(this.data.inputText)
+    if (!this.data.inputText) {
+      return;
+    }
+
     let _message = [...this.data.messages];
 
     _message.push({
@@ -26,7 +27,7 @@ Page({
     console.log('set messages')
 
     wx.request({
-      url: "http://127.0.0.1:3000",
+      url: "http://192.168.31.111:3000",
       data: {
         text: this.data.inputText,
       },
