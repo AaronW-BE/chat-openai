@@ -28,7 +28,7 @@ Page({
     console.log('set messages')
 
     wx.request({
-      url: "https://chat.fastgo.vip",
+      url: "127.0.0.1:3000",
       data: {
         text: this.data.inputText,
       },
