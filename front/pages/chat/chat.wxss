@@ -115,4 +115,5 @@ page .navbar {
 .btn-send {
     background-color: #2dda67;
     color: #fff;
+    font-size: 26rpx;
 }

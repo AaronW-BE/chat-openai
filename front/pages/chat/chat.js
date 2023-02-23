@@ -19,6 +19,7 @@ Page({
     let _message = [...this.data.messages];
 
     _message.push({
+      id: this.data.messages.length + 1,
       self: true,
       text: this.data.inputText,
       createTime: new Date(),
@@ -27,14 +28,16 @@ Page({
     console.log('set messages')
 
     wx.request({
-      url: "http://192.168.31.111:3000",
+      url: "https://chat.fastgo.vip",
       data: {
         text: this.data.inputText,
       },
       success: res => {
         console.log(res);
+        let _message = [...this.data.messages];
         _message.push({
-          text: res.data,
+          id: this.data.messages.length + 1,
+          text: res.data.replaceAll("\n", "<br/>"),
           createTime: new Date(),
           self: false,
         })
