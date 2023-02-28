@@ -1,4 +1,3 @@
-<view class="navbar">Chatting with OpenAI</view>
 <view class="page-content">
     <view class="chat-container">
         <view class="chat-content">
