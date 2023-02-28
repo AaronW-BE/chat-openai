@@ -1,13 +1,12 @@
-<view class="page-content">
-    <view class="chat-container">
-        <view class="chat-content">
-            <view wx:for="{{messages}}" class="chat-message {{item.self ? 'self' : '' }}" wx:key="id" id="cm-{{item.id}}">
-<!--                <view class="chat-bullet">{{item.text}}</view>-->
-                <rich-text class="chat-bullet" space="nbsp" nodes="{{item.text}}" user-select></rich-text>
-            </view>
-        </view>
+<scroll-view
+        scroll-into-view="cm-{{messages.length}}"
+        scroll-with-animation
+        scroll-y="true" class="chat-content">
+    <view wx:for="{{messages}}" class="chat-message {{item.self ? 'self' : '' }}" wx:key="id" id="cm-{{item.id}}">
+        <!--                <view class="chat-bullet">{{item.text}}</view>-->
+        <rich-text class="chat-bullet" space="nbsp" nodes="{{item.text}}" user-select></rich-text>
     </view>
-</view>
+</scroll-view>
 
 <view class="chat-panel">
     <input type="text" bindinput="handleInput" value="{{inputText}}" bindconfirm="bindSend" />
