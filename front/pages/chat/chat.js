@@ -21,6 +21,7 @@ Page({
       return;
     }
 
+
     let _message = [...this.data.messages];
 
     _message.push({
@@ -44,11 +45,15 @@ Page({
             uid: res.header.uid
           })
         }
+
+        // play audio
+        getApp().data.audioCtx.play();
+
         console.log(res);
         let _message = [...this.data.messages];
         _message.push({
           id: this.data.messages.length + 1,
-          text: res.data.replaceAll("\n", "<br/>"),
+          text: res.data.trim().replaceAll("\n", "<br/>"),
           createTime: new Date(),
           self: false,
         })

@@ -55,7 +55,7 @@ fastify.get('/', async (request, reply) => {
       messages: formattedMsg,
     });
 
-    return result.data.choices[0].message;
+    return result.data.choices[0].message.content;
   } catch (e) {
     return "error" + e.message;
   }

@@ -1,19 +1,20 @@
 // app.js
 App({
   onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // 登录
-    wx.login({
-      success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      }
-    })
+    this.initAudioCtx();
   },
-  globalData: {
-    userInfo: null
+  initAudioCtx() {
+    let audioCtx = wx.createInnerAudioContext({
+      useWebAudioImplement: false
+    })
+    audioCtx.src = "/assets/audio/13654.wav";
+    audioCtx.startTime = 0;
+    audioCtx.title = "chat";
+    this.data.audioCtx = audioCtx;
+  },
+  data: {
+    userInfo: null,
+    uid: '',
+    audioCtx: null
   }
 })
