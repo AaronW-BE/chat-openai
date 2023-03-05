@@ -1,9 +1,14 @@
 Page({
   data: {
     inputText: "",
+    uid: "",
     messages: []
   },
   onLoad: function (options) {
+    let uid = wx.getStorageSync('uid') || '';
+    this.setData({
+      uid
+    })
 
   },
   handleInput(e) {
@@ -28,11 +33,17 @@ Page({
     console.log('set messages')
 
     wx.request({
-      url: "127.0.0.1:3000",
+      url: "https://chat.fastgo.vip",
       data: {
         text: this.data.inputText,
+        uid: this.data.uid
       },
       success: res => {
+        if (res.header.uid) {
+          this.setData({
+            uid: res.header.uid
+          })
+        }
         console.log(res);
         let _message = [...this.data.messages];
         _message.push({

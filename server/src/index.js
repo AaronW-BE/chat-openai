@@ -1,7 +1,8 @@
 const fastify = require('fastify')({ logger: true })
-
+const uuid = require('uuid');
 const {Configuration, OpenAIApi} = require('openai');
 const config = require('./config');
+const messageRepo = require("./repository/message");
 
 const chatConfiguration = new Configuration({
   apiKey: config.API_KEY,
@@ -26,13 +27,36 @@ start().then();
 const openai = new OpenAIApi(chatConfiguration);
 
 fastify.get('/', async (request, reply) => {
-  const result = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: request.query.text,
-    max_tokens: 1024,
-    temperature: 0,
-    user: "aa"
-  });
-  console.log(result.data)
-  return result.data.choices[0].text;
+  let {uid, text} = request.query;
+
+  if (!text) {
+    return "";
+  }
+
+  if (!uid) {
+    uid = uuid.v4();
+  }
+
+  messageRepo.add(uid, {
+    role: "user",
+    content: text
+  })
+
+  let totalMessages = messageRepo.get(uid);
+
+  // formatted messages
+  let formattedMsg = totalMessages.map(msg => msg.content);
+
+  try {
+    reply.header('uid', uid);
+
+    const result = await openai.createChatCompletion({
+      model: config.MODEL,
+      messages: formattedMsg,
+    });
+
+    return result.data.choices[0].message;
+  } catch (e) {
+    return "error" + e.message;
+  }
 })
