@@ -8,6 +8,11 @@ const schema = {
     PORT: { type: "number", default: 3000 },
     API_KEY: { type: "string" },
     ORG: { type: "string", default: "" },
+    MONGO_USER: { type: "string" },
+    MONGO_PASS: { type: "string" },
+    MONGO_DB: { type: "string" },
+    MONGO_HOST: { type: "string" },
+    MONGO_PORT: { type: "number", default: "27017" }
   }
 }
 

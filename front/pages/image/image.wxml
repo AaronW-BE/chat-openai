@@ -1,0 +1,12 @@
+<view>
+    <view>
+        <input class="search-input" bindinput="handleInput"></input>
+        <view bindtap="handleGenerate">Generate</view>
+    </view>
+    <view wx:if="{{generating}}">
+        <view class="spinner">
+            <view class="double-bounce1"></view>
+            <view class="double-bounce2"></view>
+        </view>
+    </view>
+</view>

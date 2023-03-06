@@ -8,7 +8,9 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "env-schema": "^5.2.0",
     "fastify": "^4.14.0",
+    "mongoose": "^7.0.0",
     "openai": "^3.1.0",
     "uuid": "^9.0.0"
   }

@@ -9,6 +9,16 @@ const chatConfiguration = new Configuration({
   organization: config.ORG
 })
 
+fastify.register(
+  require('./config/mongo').plugin,
+  {
+    user: config.MONGO_USER,
+    pass: config.MONGO_PASS,
+    dbName: config.MONGO_DB,
+    host: config.MONGO_HOST,
+    port: config.MONGO_PORT
+  }
+)
 
 const start = async () => {
   try {
@@ -17,7 +27,7 @@ const start = async () => {
       port: 3000
     });
   } catch (e) {
-    fastify.logger.error(e);
+    fastify.log.error(e.message);
     process.exit(1);
   }
 }
@@ -27,7 +37,7 @@ start().then();
 const openai = new OpenAIApi(chatConfiguration);
 
 fastify.get('/', async (request, reply) => {
-  let {uid, text} = request.query;
+  let {uid, text, platform} = request.query;
 
   if (!text) {
     return "";
