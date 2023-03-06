@@ -3,7 +3,8 @@
     "audio"
   ],
   "pages":[
-    "pages/chat/chat"
+    "pages/chat/chat",
+    "pages/image/image"
   ],
   "window":{
     "backgroundTextStyle":"light",
