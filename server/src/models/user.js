@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
+const {model} = require("mongoose");
 const { Schema } = mongoose;
 
-module.exports = {
+let schema = {
   name: "user",
   schema: new Schema({
     nickname: String,
+    avatar: String,
     createAt: Date,
     originFrom: String,
   }),
-  model: null,
 }
+module.exports = model(schema.name, schema.schema);

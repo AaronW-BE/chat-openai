@@ -16,8 +16,6 @@ module.exports = {
     })
       .then(mongoose => {
         console.info("connect to mongodb success");
-        loadModels();
-
         fastify.mongoose = mongoose;
         done();
       })
