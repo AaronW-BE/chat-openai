@@ -4,13 +4,15 @@
   ],
   "pages":[
     "pages/chat/chat",
+    "pages/index/index",
     "pages/image/image"
   ],
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "Weixin",
-    "navigationBarTextStyle":"black"
+    "navigationBarTextStyle":"black",
+    "resizable": true
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

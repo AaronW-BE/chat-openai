@@ -1,3 +1,5 @@
+import {Chat} from "../../api/chat";
+
 Page({
   data: {
     inputText: "",
@@ -33,35 +35,21 @@ Page({
 
     console.log('set messages')
 
-    wx.request({
-      url: "https://chat.fastgo.vip",
-      data: {
-        text: this.data.inputText,
-        uid: this.data.uid
-      },
-      success: res => {
-        if (res.header.uid) {
-          this.setData({
-            uid: res.header.uid
-          })
-        }
+    Chat(this.data.inputText).then(res => {
+      // play audio
+      getApp().config.playSound && getApp().data.audioCtx.play();
 
-        // play audio
-        getApp().data.audioCtx.play();
+      let _message = [...this.data.messages];
+      _message.push({
+        id: this.data.messages.length + 1,
+        text: res.data.trim().replaceAll("\n", "<br/>"),
+        createTime: new Date(),
+        self: false,
+      })
 
-        console.log(res);
-        let _message = [...this.data.messages];
-        _message.push({
-          id: this.data.messages.length + 1,
-          text: res.data.trim().replaceAll("\n", "<br/>"),
-          createTime: new Date(),
-          self: false,
-        })
-
-        this.setData({
-          messages: _message
-        })
-      }
+      this.setData({
+        messages: _message
+      })
     })
 
     this.setData({

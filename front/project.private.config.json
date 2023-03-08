@@ -11,7 +11,15 @@
       "list": []
     },
     "miniprogram": {
-      "list": []
+      "list": [
+        {
+          "name": "Chatting",
+          "pathName": "pages/chat/chat",
+          "query": "",
+          "scene": null,
+          "launchMode": "default"
+        }
+      ]
     }
   }
 }
