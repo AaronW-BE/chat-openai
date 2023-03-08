@@ -42,7 +42,7 @@ Page({
       let _message = [...this.data.messages];
       _message.push({
         id: this.data.messages.length + 1,
-        text: res.data.trim().replaceAll("\n", "<br/>"),
+        text: res.trim().replaceAll("\n", "<br/>"),
         createTime: new Date(),
         self: false,
       })
