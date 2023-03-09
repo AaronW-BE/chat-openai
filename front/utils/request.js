@@ -1,5 +1,8 @@
 const BASEURL = "http://127.0.0.1:3000";
 
+let MAX_FAIL_RETRY_COUNT = 3;
+let failCount = 0;
+
 export const R = (url, method, query = {}, data = {}, headers = {}) => {
   let token = wx.getStorageSync('token');
   if (token.content) {
@@ -10,9 +13,11 @@ export const R = (url, method, query = {}, data = {}, headers = {}) => {
     data = query;
   }
 
-  let MAX_FAIL_RETRY_COUNT = 3;
-  let failCount = 0;
   return new Promise((resolve, reject) => {
+    if (failCount >= MAX_FAIL_RETRY_COUNT) {
+      reject("retry overflow");
+      return;
+    }
     wx.request({
       url: BASEURL + url,
       method,
@@ -20,15 +25,9 @@ export const R = (url, method, query = {}, data = {}, headers = {}) => {
       header: headers,
       async success(res) {
         if (res.statusCode === 401) {
-          if (failCount < MAX_FAIL_RETRY_COUNT) {
-            failCount++;
-          } else {
-            console.warn("beyond max retry times");
-            reject(res.data);
-          }
-
+          failCount++;
           let app = getApp();
-          await app.auth();
+          await app.handleAuth();
 
           // resend
           await R(url, method, query, data, headers);
@@ -38,7 +37,7 @@ export const R = (url, method, query = {}, data = {}, headers = {}) => {
       fail(res) {
         reject(res);
       }
-    })
+    });
   })
 }
 
