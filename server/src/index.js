@@ -37,21 +37,6 @@ fastify.register(require('@fastify/jwt'), {
     expiresIn: config.APP_AUTH_JWT_EXPIRE_IN,
     iss: config.APP_AUTH_JWT_ISS
   },
-  formatUser: async (user) => {
-    // obtain user base info
-    let storeUser = await User.findOne({
-      _id: "6406e6e86947858c29b2bcb4"
-    });
-    if (storeUser) {
-      return {
-        uid: user.uid,
-        nickname: storeUser.nickname,
-        createAt: storeUser.createAt,
-        avatar: storeUser.avatar
-      };
-    }
-    return {};
-  }
 })
 
 const excludeAuth = config.APP_AUTH_WHITELIST
@@ -96,11 +81,15 @@ fastify.get('/ping', async (req, res) => {
 fastify.get('/', async (request, reply) => {
   let {text} = request.query;
 
+  if (!text) {
+    return;
+  }
+
   // get history messages
   let messageRepo = await Message.findOne({
     from: request.user.uid,
-    to: "bot"
-  })
+    to: "assistant"
+  });
 
   // meg pack
   let msg = {
@@ -111,8 +100,8 @@ fastify.get('/', async (request, reply) => {
 
   if (!messageRepo) {
     messageRepo = await Message.create({
-      from: request.uid,
-      to: "bot",
+      from: request.user.uid,
+      to: "assistant",
       pool: [ msg ],
       createAt: Date.now(),
     })
@@ -130,7 +119,7 @@ fastify.get('/', async (request, reply) => {
 
   try {
     const result = await openai.createChatCompletion({
-      model: config.MODEL,
+      model: config.APP_WALLE_AI_MODEL,
       messages: formattedMsg,
     });
 
@@ -138,20 +127,22 @@ fastify.get('/', async (request, reply) => {
 
     if (answer) {
       messageRepo.pool.push({
-        role: "bot",
+        role: "assistant",
         content: answer,
         createAt: Date.now()
       })
+      messageRepo.save();
     }
     return answer;
 
   } catch (e) {
-    return "error" + e.message;
+
+    return "error: " + e.message;
   }
 })
 
 fastify.get("/user", async (req, rep) => {
-  return req.user;
+  return User.findById(req.user.uid);
 })
 
 fastify.post('/auth/weapp', async (req, rep) => {

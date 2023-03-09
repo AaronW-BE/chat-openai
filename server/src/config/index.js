@@ -9,6 +9,7 @@ const schema = {
     APP_AUTH_WHITELIST: {type: "string", separator: ","},
     APP_AUTH_JWT_EXPIRE_IN: {type: "number", default: 7200},
     APP_AUTH_JWT_ISS: {type: "string", default: ""},
+    APP_WALLE_AI_MODEL: {type: "string", default: "gpt-3.5-turbo"},
     PORT: { type: "number", default: 3000 },
     API_KEY: { type: "string" },
     ORG: { type: "string", default: "" },
