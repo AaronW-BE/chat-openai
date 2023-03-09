@@ -2,9 +2,9 @@ const fastify = require('fastify')({ logger: true })
 const uuid = require('uuid');
 const {Configuration, OpenAIApi} = require('openai');
 const config = require('./config');
-const messageRepo = require("./repository/message");
 const User = require('./models/user');
 const Message = require('./models/message');
+const Gallery = require('./models/gallery');
 const {WeAppServerApi} = require("./libs/weapp");
 const ThirdUserAccount = require('./models/thirdAccount');
 const repl = require("repl");
@@ -139,6 +139,43 @@ fastify.get('/', async (request, reply) => {
 
     return "error: " + e.message;
   }
+})
+
+fastify.post('/img', async (req, rep) => {
+  const {desc} = req.body;
+  if (!desc) {
+    return;
+  }
+
+  let ret = await openai.createImage({
+    prompt: desc,
+    n: 1,
+    size: "1024x1024"
+  });
+
+  // find user gallery
+  let gallery = await Gallery.findOne({
+    owner: req.user.uid
+  })
+
+  if (!gallery) {
+    gallery = new Gallery({
+      owner: req.user.uid,
+      stores: [],
+      createAt: Date.now()
+    })
+  }
+
+  gallery.stores.push({
+    desc: desc,
+    keyword: desc,
+    images: ret.data.data,
+    createAt: Date
+  })
+
+  await gallery.save();
+
+  return ret.data.data
 })
 
 fastify.get("/user", async (req, rep) => {

@@ -6,9 +6,6 @@ module.exports = {
   plugin: (fastify, options, done) => {
     let {user, pass, dbName, host, port} = options;
 
-    console.log(user, pass, dbName);
-    // init models
-
     mongoose.connect(`mongodb://${host}:${port}`, {
       user, pass, dbName,
       authSource: "admin",
