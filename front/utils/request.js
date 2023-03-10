@@ -45,6 +45,6 @@ export const GET = (url, data = {}, headers = {}) => {
   return R(url, "GET", data, {}, headers);
 }
 
-export const POST = (url, data, headers = {}) => {
-  return R(url, "POST", data, {}, headers);
+export const POST = (url, data = {}, headers = {}) => {
+  return R(url, "POST", {}, data, headers);
 }

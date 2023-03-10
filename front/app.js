@@ -29,7 +29,8 @@ App({
     wx.checkSession({
       success: async () => {
         let tokenObj = wx.getStorageSync('token');
-        if (!tokenObj || tokenObj.expireAt > Date.now() - 200 * 1000) {
+        if (!tokenObj || tokenObj.expireAt < Date.now() - 200 * 1000) {
+          console.warn("auth expired");
           await this.handleAuth();
         }
       },

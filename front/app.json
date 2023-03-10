@@ -3,17 +3,17 @@
     "audio"
   ],
   "pages":[
-    "pages/chat/chat",
     "pages/index/index",
-    "pages/image/image"
+    "pages/image/image",
+    "pages/chat/chat"
   ],
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "Weixin",
-    "navigationBarTextStyle":"black",
-    "resizable": true
+    "navigationBarTextStyle":"black"
   },
+  "resizable": true,
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }
