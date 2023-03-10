@@ -4,6 +4,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "nodemon .",
+    "start:prod": "node src/index.js",
     "keygen": "node src/keygen.js"
   },
   "license": "MIT",
