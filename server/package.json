@@ -5,11 +5,13 @@
   "scripts": {
     "start": "nodemon .",
     "start:prod": "node src/index.js",
-    "keygen": "node src/keygen.js"
+    "keygen": "node src/utils/keygen.js"
   },
   "license": "MIT",
   "dependencies": {
     "@fastify/jwt": "^6.7.0",
+    "@fastify/rate-limit": "^8.0.0",
+    "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
     "env-schema": "^5.2.0",
     "fastify": "^4.14.0",

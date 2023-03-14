@@ -1,5 +1,4 @@
 const fastify = require('fastify')({ logger: true })
-const uuid = require('uuid');
 const {Configuration, OpenAIApi} = require('openai');
 const config = require('./config');
 const User = require('./models/user');
@@ -7,8 +6,13 @@ const Message = require('./models/message');
 const Gallery = require('./models/gallery');
 const {WeAppServerApi} = require("./libs/weapp");
 const ThirdUserAccount = require('./models/thirdAccount');
-const repl = require("repl");
 const matcher = require('micromatch');
+
+const {Types} = require('mongoose')
+
+let dayjs = require('dayjs')
+const utc = require('dayjs/plugin/utc');
+dayjs.extend(utc);
 
 const serverApi = new WeAppServerApi({
   appId: config.WEAPP_APP_ID,
@@ -54,7 +58,8 @@ fastify.addHook("onRequest", async (request, reply) => {
   try {
     await request.jwtVerify();
   } catch (e) {
-    fastify.log.info("jwt verify failed" + e.message);
+    console.error(e);
+    // fastify.log.info("jwt verify failed" + e.message);
     reply.send(e)
   }
 })
@@ -83,6 +88,33 @@ fastify.get('/', async (request, reply) => {
 
   if (!text) {
     return;
+  }
+
+  // get today message quantity
+  let msgCountToday = (await Message.aggregate([
+    {
+      $match: {
+        from: new Types.ObjectId(request.user.uid),
+        'pool.role': 'user',
+        '$and': [
+          {
+            'pool.createAt': {
+              $gte: dayjs.utc().hour(0).minute(0).second(0).millisecond(0).valueOf(),
+              $lte: dayjs.utc().hour(23).minute(59).second(59).millisecond(999).valueOf()
+            }
+          }
+        ],
+      }
+    },
+    {
+      $unwind: '$pool'
+    }
+  ]).exec()).length;
+
+  console.debug('send msg today ' + msgCountToday)
+  if (msgCountToday > 50) {
+    // beyond max daily msg send
+    return "【系统】当日额度使用完，请提升额度活联系平台"
   }
 
   // get history messages
@@ -170,7 +202,7 @@ fastify.post('/img', async (req, rep) => {
     desc: desc,
     keyword: desc,
     images: ret.data.data,
-    createAt: Date
+    createAt: Date.now()
   })
 
   await gallery.save();
