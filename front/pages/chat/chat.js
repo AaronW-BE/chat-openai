@@ -6,13 +6,14 @@ Page({
     messages: []
   },
   onLoad: function (options) {
+    this.loadChatHistory();
+
     wx.showModal({
       title: "提示",
       content: "为了防止资源滥用，每日发送上限为 50 条，如有更多需要请联系瓦力申请更多额度",
       showCancel: false
     })
 
-    this.loadChatHistory();
   },
   handleInput(e) {
     this.setData({
@@ -71,11 +72,46 @@ Page({
     })
   },
   formatMsg(msgList) {
-    return msgList.map((msg, idx) => ({
-      id: idx + 1,
-      self: msg.role === 'user',
-      text: msg.content,
-      createTime: new Date(msg.createAt),
-    }))
+    let lastMsgDate = 0;
+    let now = Date.now();
+    let formattedMsgList = []
+    let msgId = 0;
+    msgList.map((msg) => {
+      let sysMsg;
+      let yesterdayMsg = now - msg.createAt > 24 * 60 * 60 * 1000;
+
+      // 大于30分钟显示时间
+      if (msg.createAt - lastMsgDate > 1000 * 60 * 30) {
+        sysMsg = {
+          id: ++msgId,
+          type: 'sys',
+          role: 'date',
+          text: this.datetimeFormat(msg.createAt, yesterdayMsg)
+        };
+
+        lastMsgDate = msg.createAt;
+        formattedMsgList.push(sysMsg);
+      }
+
+      formattedMsgList.push({
+        id: ++msgId,
+        self: msg.role === 'user',
+        text: this.contentFormat(msg.content),
+        createTime: new Date(msg.createAt),
+      })
+    })
+    return formattedMsgList;
+  },
+  datetimeFormat(ts, full = false) {
+    let date = new Date(ts);
+    let str = "";
+    if (full) {
+      str = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} `;
+    }
+    str += `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    return str;
+  },
+  contentFormat(text) {
+    return text.trim().replaceAll("\n", "<br/>");
   }
 });

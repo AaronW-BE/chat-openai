@@ -2,9 +2,12 @@
         scroll-into-view="cm-{{messages.length}}"
         scroll-with-animation
         scroll-y="true" class="chat-content">
-    <view wx:for="{{messages}}" class="chat-message {{item.self ? 'self' : '' }}" wx:key="id" id="cm-{{item.id}}">
+    <view wx:for="{{messages}}" class="chat-message {{item.type === 'sys' ? 'sys' : ''}} {{item.self ? 'self' : '' }}" wx:key="id" id="cm-{{item.id}}">
         <!--                <view class="chat-bullet">{{item.text}}</view>-->
-        <rich-text class="chat-bullet" space="nbsp" nodes="{{item.text}}" user-select></rich-text>
+        <view class="sys-msg" wx:if="{{item.type === 'sys'}}">
+            {{item.text}}
+        </view>
+        <rich-text wx:else class="chat-bullet" space="nbsp" nodes="{{item.text}}" user-select></rich-text>
     </view>
 </scroll-view>
 

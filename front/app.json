@@ -16,7 +16,7 @@
   "useExtendedLib": {
     "weui": true
   },
-  "resizable": true,
+  "resizable": false,
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

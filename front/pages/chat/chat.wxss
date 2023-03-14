@@ -19,6 +19,19 @@ page {
     text-align: right;
 }
 
+.chat-message.sys {
+    text-align: center;
+}
+.sys-msg {
+    background-color: #c9c9c9;
+    color: #fff;
+    display: inline-block;
+    font-size: 20rpx;
+    padding: 2rpx 12rpx;
+    margin: 0 auto;
+    border-radius: 10%;
+}
+
 .chat-bullet {
     padding: 16rpx 20rpx;
     border: 1px solid #efefef;
