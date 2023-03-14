@@ -1,4 +1,4 @@
-import {Chat} from "../../api/chat";
+import {Chat, ChatHistory} from "../../api/chat";
 
 Page({
   data: {
@@ -11,6 +11,8 @@ Page({
       content: "为了防止资源滥用，每日发送上限为 50 条，如有更多需要请联系瓦力申请更多额度",
       showCancel: false
     })
+
+    this.loadChatHistory();
   },
   handleInput(e) {
     this.setData({
@@ -56,4 +58,24 @@ Page({
       inputText: "",
     })
   },
+
+  loadChatHistory() {
+    let startDate = new Date()
+    startDate.setDate(new Date().getDate() - 1)
+    ChatHistory(startDate.getTime()).then(result => {
+      if (result.length) {
+        this.setData({
+          messages: this.formatMsg(result)
+        })
+      }
+    })
+  },
+  formatMsg(msgList) {
+    return msgList.map((msg, idx) => ({
+      id: idx + 1,
+      self: msg.role === 'user',
+      text: msg.content,
+      createTime: new Date(msg.createAt),
+    }))
+  }
 });

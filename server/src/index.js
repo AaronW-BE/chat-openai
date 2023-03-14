@@ -173,6 +173,32 @@ fastify.get('/', async (request, reply) => {
   }
 })
 
+// history chat msg
+fastify.get('/chat', async (req, rep) => {
+  const {start} = req.query;
+
+  let filter = {
+    from: new Types.ObjectId(req.user.uid),
+  };
+
+  if (start) {
+    filter['pool.createAt'] = {
+      $gte: dayjs(start).utc().valueOf()
+    }
+  }
+
+  const msg = await Message.aggregate([
+    { $match: filter },
+    { $unwind: '$pool' },
+    {
+      $replaceRoot: {
+        newRoot: "$pool"
+      }
+    }
+  ]);
+  return msg ? msg : [];
+})
+
 fastify.post('/img', async (req, rep) => {
   const {desc} = req.body;
   if (!desc) {
