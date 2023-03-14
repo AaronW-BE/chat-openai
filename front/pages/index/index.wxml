@@ -1,0 +1,28 @@
+<view>
+    <view class="beta-desc">
+        <view>当前版本为体验版本，如有意见请使用反馈按钮向瓦力反馈</view>
+    </view>
+
+    <view class="header">
+        <text class="head-text">Hi, I am Wall-E</text>
+    </view>
+
+    <view class="shortcut-btn-group">
+        <navigator url="/pages/chat/chat" class="shortcut-btn">
+            <text class="">智能对话</text>
+        </navigator>
+        <navigator url="/pages/image/image" class="shortcut-btn">
+            <text class="">图片生成</text>
+        </navigator>
+    </view>
+
+    <view class="tips-wrapper">
+
+        <view>
+            <button class="feedback-btn" open-type="feedback">问题与反馈</button>
+        </view>
+        <view class="ai-tips">
+            AI model by GPT 3.5 Turbo
+        </view>
+    </view>
+</view>

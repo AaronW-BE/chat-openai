@@ -10,8 +10,11 @@
   "window":{
     "backgroundTextStyle":"light",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "瓦力bot",
     "navigationBarTextStyle":"black"
+  },
+  "useExtendedLib": {
+    "weui": true
   },
   "resizable": true,
   "style": "v2",

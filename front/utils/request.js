@@ -1,4 +1,5 @@
-const BASEURL = "http://127.0.0.1:3000";
+// const BASEURL = "http://127.0.0.1:3000";
+const BASEURL = "https://chat.fastgo.vip";
 
 let MAX_FAIL_RETRY_COUNT = 3;
 let failCount = 0;
@@ -32,6 +33,7 @@ export const R = (url, method, query = {}, data = {}, headers = {}) => {
           // resend
           await R(url, method, query, data, headers);
         }
+        failCount = 0;
         resolve(res.data);
       },
       fail(res) {

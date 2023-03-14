@@ -1,12 +1,28 @@
 <view>
-    <view>
-        <input class="search-input" bindinput="handleInput"></input>
-        <view bindtap="handleGenerate">Generate</view>
+    <view class="search-box">
+        <textarea placeholder="请描述你想生成得内容，例如：生成一个奔跑的小狗"
+                  auto-focus
+                  class="search-input" bindinput="handleInputText" bindconfirm="handleGenerate"></textarea>
+<!--        <input placeholder="请描述你想生成得内容" clearable class="search-input" bindinput="handleInputText" bindconfirm="handleGenerate"></input>-->
+        <view class="search-btn" bindtap="handleGenerate">生成图片</view>
+        <view style="text-align: left; font-size: 26rpx; margin: 16rpx 0 0 0; color: #787878;">
+            Tip: 长按图片可保存
+        </view>
     </view>
     <view wx:if="{{generating}}">
         <view class="spinner">
             <view class="double-bounce1"></view>
             <view class="double-bounce2"></view>
+        </view>
+    </view>
+    <view>
+        <view wx:for="{{imageList}}" wx:key="url" class="gallery-wrp">
+            <view>
+                <image src="{{item.url}}" class="img-item" show-menu-by-longpress="{{true}}" />
+<!--                <view style="text-align: center; padding: 10rpx;">-->
+<!--                    <button size="mini">收藏</button>-->
+<!--                </view>-->
+            </view>
         </view>
     </view>
 </view>

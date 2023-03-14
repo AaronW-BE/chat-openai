@@ -16,6 +16,13 @@
           "name": "Chatting",
           "pathName": "pages/chat/chat",
           "query": "",
+          "launchMode": "default",
+          "scene": null
+        },
+        {
+          "name": "图片生成",
+          "pathName": "pages/image/image",
+          "query": "",
           "scene": null,
           "launchMode": "default"
         }

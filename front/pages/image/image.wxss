@@ -1,15 +1,31 @@
 page {
-    background-color: #1abc9c;
+    background-color: #efefef;
 }
 
+.search-box {
+    align-items: center;
+    padding: 10rpx;
+    background-color: #fff;
+    text-align: center;
+}
 .search-input {
     background-color: #fff;
+    width: 740rpx;
+    height: 210rpx;
     margin: 8rpx;
     font-size: 30rpx;
     padding: 8rpx;
     position: relative;
+    border: 1px solid #eee;
+    text-align: left;
 }
-
+.search-btn {
+    display: inline-block;
+    font-size: 34rpx;
+    padding: 2rpx 26rpx;
+    background-color: #1abc9c;
+    color: #fff;
+}
 .spinner {
     width: 40px;
     height: 40px;
@@ -50,4 +66,15 @@ page {
           transform: scale(1.0);
           -webkit-transform: scale(1.0);
       }
+}
+
+.gallery-wrp {
+    display: flex;
+    margin-top: 20rpx;
+    justify-content: center;
+}
+
+.img-item {
+    width: 500rpx;
+    height: 500rpx;
 }

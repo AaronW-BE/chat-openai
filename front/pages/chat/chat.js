@@ -3,15 +3,14 @@ import {Chat} from "../../api/chat";
 Page({
   data: {
     inputText: "",
-    uid: "",
     messages: []
   },
   onLoad: function (options) {
-    let uid = wx.getStorageSync('uid') || '';
-    this.setData({
-      uid
+    wx.showModal({
+      title: "提示",
+      content: "为了防止资源滥用，每日发送上限为 50 条，如有更多需要请联系瓦力申请更多额度",
+      showCancel: false
     })
-
   },
   handleInput(e) {
     this.setData({

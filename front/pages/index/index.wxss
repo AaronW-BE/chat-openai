@@ -1,0 +1,49 @@
+page {
+    background-color: #efefef;
+}
+
+.header {
+    margin-top: 27rpx;
+    margin-left: 27rpx;
+}
+.head-text {
+    font-size: 36rpx;
+}
+
+
+.shortcut-btn-group {
+    display: flex;
+    margin-top: 20rpx;
+}
+
+.shortcut-btn {
+    background-color: #fff;
+    padding: 27rpx 20rpx;
+    margin: 10rpx;
+    flex: 1;
+    text-align: center;
+}
+
+.tips-wrapper {
+    margin-top: 50rpx;
+}
+.beta-desc {
+    padding: 10rpx;
+    background-color: #d5eeff;
+    font-size: 26rpx;
+    color: #3490ec;
+}
+
+.ai-tips {
+    margin-top: 10rpx;
+    font-size: 24rpx;
+    text-align: center;
+    color: #606060;
+}
+
+.feedback-btn {
+    background-color: inherit;
+    font-weight: inherit;
+    font-size: 26rpx;
+    color: #6b6b6b;
+}
