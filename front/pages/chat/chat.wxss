@@ -46,6 +46,11 @@ page {
     text-align: left;
 }
 
+.chat-msg-text {
+    white-space: pre-wrap;
+    font-size: 32rpx;
+}
+
 .chat-bullet::before {
     content: "";
     position: absolute;

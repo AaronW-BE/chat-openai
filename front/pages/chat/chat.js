@@ -44,7 +44,7 @@ Page({
       let _message = [...this.data.messages];
       _message.push({
         id: this.data.messages.length + 1,
-        text: res.trim().replaceAll("\n", "<br/>"),
+        text: res,
         createTime: new Date(),
         self: false,
       })
@@ -96,7 +96,7 @@ Page({
       formattedMsgList.push({
         id: ++msgId,
         self: msg.role === 'user',
-        text: this.contentFormat(msg.content),
+        text: msg.content,
         createTime: new Date(msg.createAt),
       })
     })
@@ -111,7 +111,4 @@ Page({
     str += `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
     return str;
   },
-  contentFormat(text) {
-    return text.trim().replaceAll("\n", "<br/>");
-  }
 });

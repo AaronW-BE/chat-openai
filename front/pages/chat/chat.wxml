@@ -7,7 +7,7 @@
         <view class="sys-msg" wx:if="{{item.type === 'sys'}}">
             {{item.text}}
         </view>
-        <rich-text wx:else class="chat-bullet" space="nbsp" nodes="{{item.text}}" user-select></rich-text>
+        <rich-text wx:else class="chat-bullet" space="nbsp" nodes="<pre class='chat-msg-text'>{{item.text}}</pre>" user-select></rich-text>
     </view>
 </scroll-view>
 
