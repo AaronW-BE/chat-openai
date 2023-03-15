@@ -285,3 +285,30 @@ fastify.post('/auth/weapp', async (req, rep) => {
     expire: fastify.jwt.options.sign.expiresIn
   };
 })
+
+
+// login to dashboard
+fastify.post('/account/login', (req, resp) => {
+
+})
+
+fastify.get("/dashboard/user", async (req, resp) => {
+  return User.find({});
+})
+
+fastify.get("/dashboard/user/:id/chat", async (req, resp) => {
+  let {id} = req.params;
+
+  let filter = {
+    from: new Types.ObjectId(id),
+  };
+  return Message.aggregate([
+    {$match: filter},
+    {$unwind: '$pool'},
+    {
+      $replaceRoot: {
+        newRoot: "$pool"
+      }
+    }
+  ]);
+})
