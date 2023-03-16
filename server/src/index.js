@@ -95,19 +95,28 @@ fastify.get('/', async (request, reply) => {
     {
       $match: {
         from: new Types.ObjectId(request.user.uid),
-        'pool.role': 'user',
+      }
+    },
+    {
+      $unwind: '$pool'
+    },
+    {
+      $replaceRoot: {
+        newRoot: "$pool"
+      }
+    },
+    {
+      $match: {
+        'role': 'user',
         '$and': [
           {
-            'pool.createAt': {
+            'createAt': {
               $gte: dayjs.utc().hour(0).minute(0).second(0).millisecond(0).valueOf(),
               $lte: dayjs.utc().hour(23).minute(59).second(59).millisecond(999).valueOf()
             }
           }
         ],
       }
-    },
-    {
-      $unwind: '$pool'
     }
   ]).exec()).length;
 
