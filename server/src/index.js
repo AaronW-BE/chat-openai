@@ -4,6 +4,8 @@ const config = require('./config');
 const User = require('./models/user');
 const Message = require('./models/message');
 const Gallery = require('./models/gallery');
+const Account = require('./models/account');
+
 const {WeAppServerApi} = require("./libs/weapp");
 const ThirdUserAccount = require('./models/thirdAccount');
 const matcher = require('micromatch');
@@ -12,6 +14,8 @@ const {Types} = require('mongoose')
 
 let dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc');
+const {sha256, sha512} = require("./utils/encryptUtils");
+const path = require("path");
 dayjs.extend(utc);
 
 const serverApi = new WeAppServerApi({
@@ -23,6 +27,11 @@ const chatConfiguration = new Configuration({
   apiKey: config.API_KEY,
   organization: config.ORG
 })
+
+fastify.register(require('./plugins/i18n'), {
+  localesPath: path.join(__dirname, './locales'),
+  defaultLocale: 'en'
+});
 
 fastify.register(
   require('./config/mongo').plugin,
@@ -79,9 +88,9 @@ const start = async () => {
 start().then();
 
 const openai = new OpenAIApi(chatConfiguration);
-fastify.get('/ping', async (req, res) => {
-  return "pong";
-})
+fastify.get('/ping', function (req, res) {
+  return this.t("PONG");
+});
 
 fastify.get('/', async (request, reply) => {
   let {text} = request.query;
@@ -296,10 +305,6 @@ fastify.post('/auth/weapp', async (req, rep) => {
 })
 
 
-// login to dashboard
-fastify.post('/account/login', (req, resp) => {
-
-})
 
 fastify.get("/dashboard/user", async (req, resp) => {
   return User.find({});
@@ -320,4 +325,35 @@ fastify.get("/dashboard/user/:id/chat", async (req, resp) => {
       }
     }
   ]);
+})
+
+fastify.post('/dashboard/account/login', async (req, resp) => {
+  const {username, password} = req.body;
+
+  let storeAccount = await Account.findOne({username})
+
+  if (!storeAccount) {
+    resp.code(403);
+    resp.send(fastify.t('USERNAME_PWD_INVALID'));
+    return resp;
+  }
+
+  console.log('store account encrypt type', storeAccount.encryptType);
+
+  // encrypt plain password by encrypt method
+  let validPwd = storeAccount.encryptType === 'sha256' && sha256(password) === storeAccount.password;
+
+  if (validPwd) {
+    let token = fastify.jwt.sign({
+      uid: storeAccount._id,
+    })
+
+    return {
+      token,
+      expireAt: fastify.jwt.options.sign.expiresIn * 1000 + Date.now()
+    };
+  }
+
+  resp.statusCode = 403;
+  resp.send(fastify.t('USERNAME_PWD_INVALID'));
 })
