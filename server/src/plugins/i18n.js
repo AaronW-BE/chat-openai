@@ -19,10 +19,12 @@ module.exports = fastifyPlugin(function (fastify, opts, done) {
 
   fastify.addHook('onRequest', (request, reply, done) => {
     let langStr = request.headers['accept-language'];
-    let langArr = langStr.split(',');
-    // always obtain primary lang in header
-    if (localeMap[langArr[0]]) {
-      requestLang = langArr[0];
+    if (langStr) {
+      let langArr = langStr.split(',');
+      // always obtain primary lang in header
+      if (localeMap[langArr[0]]) {
+        requestLang = langArr[0];
+      }
     }
     done();
   });

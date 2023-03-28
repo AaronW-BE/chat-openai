@@ -193,25 +193,34 @@ fastify.get('/', async (request, reply) => {
 
 // history chat msg
 fastify.get('/chat', async (req, rep) => {
-  const {start} = req.query;
+  let {start} = req.query;
 
-  let filter = {
-    from: new Types.ObjectId(req.user.uid),
-  };
+  let filter = {};
 
   if (start) {
-    filter['pool.createAt'] = {
-      $gte: dayjs(start).utc().valueOf()
+    filter['createAt'] = {
+      $gte: dayjs(parseInt(start)).utc().valueOf()
+    }
+  } else {
+    filter['createAt'] = {
+      $gte: dayjs().subtract(1, 'day').utc().valueOf()
     }
   }
 
   const msg = await Message.aggregate([
-    { $match: filter },
+    {
+      $match: {
+        from: new Types.ObjectId(req.user.uid),
+      }
+    },
     { $unwind: '$pool' },
     {
       $replaceRoot: {
         newRoot: "$pool"
       }
+    },
+    {
+      $match: filter
     }
   ]);
   return msg ? msg : [];
@@ -223,11 +232,18 @@ fastify.post('/img', async (req, rep) => {
     return;
   }
 
-  let ret = await openai.createImage({
-    prompt: desc,
-    n: 1,
-    size: "1024x1024"
-  });
+  let ret;
+  try {
+    ret = await openai.createImage({
+      prompt: desc,
+      n: 1,
+      size: "1024x1024"
+    });
+  } catch (e) {
+    console.log('==========================')
+    console.log('create image error', e.response && e.response.data)
+    console.log('==========================')
+  }
 
   // find user gallery
   let gallery = await Gallery.findOne({
