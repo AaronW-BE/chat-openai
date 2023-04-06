@@ -8,11 +8,11 @@ Page({
   onLoad: function (options) {
     this.loadChatHistory();
 
-    wx.showModal({
-      title: "提示",
-      content: "为了防止资源滥用，每日发送上限为 50 条，如有更多需要请联系瓦力申请更多额度",
-      showCancel: false
-    })
+    // wx.showModal({
+    //   title: "提示",
+    //   content: "为了防止资源滥用，每日发送上限为 50 条，如有更多需要请联系瓦力申请更多额度",
+    //   showCancel: false
+    // })
 
   },
   handleInput(e) {

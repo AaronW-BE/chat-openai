@@ -1,5 +1,5 @@
 <scroll-view
-        scroll-into-view="cm-{{messages.length}}"
+        scroll-into-view="cm-{{messages.length + 1}}"
         scroll-with-animation
         scroll-y="true" class="chat-content">
     <view wx:for="{{messages}}" class="chat-message {{item.type === 'sys' ? 'sys' : ''}} {{item.self ? 'self' : '' }}" wx:key="id" id="cm-{{item.id}}">
@@ -9,6 +9,7 @@
         </view>
         <rich-text wx:else class="chat-bullet" space="nbsp" nodes="<pre class='chat-msg-text'>{{item.text}}</pre>" user-select></rich-text>
     </view>
+    <view class="msg-canary" id="cm-{{messages.length + 1}}"></view>
 </scroll-view>
 
 <view class="chat-panel">

@@ -31,7 +31,7 @@ export const R = (url, method, query = {}, data = {}, headers = {}) => {
           await app.handleAuth();
 
           // resend
-          await R(url, method, query, data, headers);
+          res.data = await R(url, method, query, data, headers);
         }
         failCount = 0;
         resolve(res.data);
