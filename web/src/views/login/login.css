@@ -1,0 +1,22 @@
+
+.page-header {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 22px;
+}
+.form-item {
+
+}
+
+.form-item input {
+    display: block;
+    margin: 0;
+}
+
+.form-btn-wrp {
+    text-align: center;
+}
+
+.form-btn-wrp .login-btn {
+    font-size: 18px;
+}

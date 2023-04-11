@@ -1,4 +1,5 @@
 import './App.css'
+import {Link} from "react-router-dom";
 
 function App() {
   return (
@@ -8,12 +9,15 @@ function App() {
         <span className="head-text">Hi, I am Wall-E</span>
       </div>
       <div className="shortcut-btn-group">
-        <div className="btn">
-          <a href="#">智能对话</a>
+        <div className="btn shortcut-btn">
+          <Link to={`/chat`}>智能对话</Link>
         </div>
-        <div className="btn">
+        <div className="btn shortcut-btn">
           <a href="#">图像生成</a>
         </div>
+      </div>
+      <div>
+        <Link to={'/login'}>Login</Link>
       </div>
       <div className="tips-wrapper">
         <div className="feedback-btn">问题与反馈</div>

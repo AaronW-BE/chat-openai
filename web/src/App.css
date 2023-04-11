@@ -23,9 +23,15 @@
   margin-top: 10px;
 }
 
+.shortcut-btn {
+  padding: 10px;
+}
+
 .btn {
   background-color: #9a9a9a;
-  padding: 10px 2px;
+  outline: none;
+  border: none;
+  padding: 6px 20px;
   margin: 10px;
   flex: 1;
   text-align: center;
@@ -45,4 +51,19 @@
   margin-top: 4px;
   color: #a6a6a6;
   font-size: 14px;
+}
+
+.form-item {
+  margin: 10px;
+}
+
+.form-item-label {
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.form-item input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 18px;
+  padding: 6px;
 }

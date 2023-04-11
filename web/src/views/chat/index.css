@@ -1,0 +1,78 @@
+.page-container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.msg-wrp {
+    flex: 1;
+    overflow-y: scroll;
+}
+
+.user-panel {
+    display: flex;
+    padding: 2px;
+}
+
+.user-panel .msg-input {
+    flex: 1;
+    padding: 6px;
+    font-size: 18px;
+}
+
+.user-panel .msg-send-btn {
+    padding: 4px 12px;
+}
+
+.msg-content {
+
+}
+
+.msg-content.self {
+    text-align: right;
+}
+
+.msg-bubble {
+    background-color: #696969;
+    color: #e8e8e8;
+    margin: 6px;
+    padding: 8px;
+    border-radius: 4px;
+    display: inline-block;
+    position: relative;
+    max-width: calc(100% - 100px);
+    word-wrap: break-word;
+    text-align: left;
+    font-size: 16px;
+}
+
+.msg-bubble pre {
+    margin: initial;
+    word-break: normal;
+    white-space: pre-wrap;
+}
+
+.msg-bubble.left {
+    margin-left: 10px;
+}
+
+.msg-bubble.left::before {
+    position: absolute;
+    content: "";
+    border: 6px solid transparent;
+    border-right-color: #696969;
+    right: 100%;
+}
+
+.msg-bubble.right {
+    margin-right: 10px;
+    background-color: #4282f3;
+    color: #ffffff;
+}
+
+.msg-bubble.right::before {
+    position: absolute;
+    content: "";
+    border: 6px solid transparent;
+    border-left-color: #4282f3;
+    left: 100%;
+}
