@@ -9,6 +9,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@fastify/cors": "^8.2.1",
     "@fastify/jwt": "^6.7.0",
     "@fastify/rate-limit": "^8.0.0",
     "dayjs": "^1.11.7",

@@ -1,4 +1,5 @@
 const fastify = require('fastify')({ logger: true })
+const cors = require('@fastify/cors');
 const {Configuration, OpenAIApi} = require('openai');
 const config = require('./config');
 const User = require('./models/user');
@@ -43,6 +44,10 @@ fastify.register(
     port: config.MONGO_PORT
   }
 )
+
+fastify.register(cors, {
+  origin: "*", // <- allow request from all domains
+});
 
 fastify.register(require('@fastify/jwt'), {
   secret: config.APP_SECRET_KEY,
@@ -320,6 +325,53 @@ fastify.post('/auth/weapp', async (req, rep) => {
   };
 })
 
+
+fastify.post('/auth/common/login', async (req, rep) => {
+  const {username, password} = req.body || {};
+  if (!username || !password) {
+    // throw exception for error with 403 status code
+    throw new Error('username or password is empty')
+  }
+
+  let user = await User.findOne({username})
+  if (!user) {
+    throw new Error('username or password is wrong')
+  }
+
+  let isMatch = await user.comparePassword(password);
+  if (!isMatch) {
+    throw new Error('username or password is wrong')
+  }
+
+  // generate token
+  let token = fastify.jwt.sign({
+    uid: user._id,
+  });
+
+  return {
+    token,
+    expire: fastify.jwt.options.sign.expiresIn
+  };
+
+})
+
+fastify.post('/auth/common/register', async (req, rep) => {
+  const {username, password} = req.body || {};
+  if (!username || !password) {
+    throw new Error('username or password is empty')
+  }
+  // check if username is existed
+  const user = await User.findOne({username});
+  if (user) {
+    throw new Error('username is existed');
+  }
+
+  let preparedUser = new User({
+    username,
+  });
+  preparedUser.password = password;
+  await preparedUser.save();
+})
 
 
 fastify.get("/dashboard/user", async (req, resp) => {
