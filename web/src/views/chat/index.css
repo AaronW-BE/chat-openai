@@ -19,10 +19,19 @@
     font-size: 18px;
 }
 
-.user-panel .msg-send-btn {
-    padding: 4px 12px;
+button, button:active {
+    outline: none;
+    border: none;
 }
 
+.user-panel .msg-send-btn {
+    padding: 4px 12px;
+    height: 100%;
+}
+
+.msg-send-btn img {
+    height: 17px;
+}
 .msg-content {
 
 }

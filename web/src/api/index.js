@@ -1,7 +1,10 @@
 import axios from "axios";
+import {redirect} from "react-router-dom";
+
+import config from '../config/app';
 
 const instance = axios.create({
-  baseURL: "http://localhost:3000",
+  baseURL: config.host,
   timeout: 5000,
   headers: {
     "Content-Type": "application/json"
@@ -10,6 +13,9 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
+    if (localStorage.getItem('token')) {
+      config.headers.Authorization = "Bearer " + localStorage.getItem('token');
+    }
     return config;
   },
   (error) => {
@@ -19,9 +25,15 @@ instance.interceptors.request.use(
 
 instance.interceptors.response.use(
   (response) => {
+    console.log('response', response);
     return response.data;
   },
   (error) => {
+    console.log('err', error)
+    if (error.response.status === 401) {
+      return redirect("/login");
+      // window.location.href = "/login";
+    }
     return Promise.reject(error);
   }
 )

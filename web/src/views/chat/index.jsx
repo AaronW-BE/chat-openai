@@ -1,5 +1,8 @@
 import './index.css'
 import React, {useEffect, useRef, useState} from "react";
+import {SendChatApi} from "../../api/ChatApi.js";
+import {useLoaderData} from "react-router-dom";
+import sendBtnImg from '../../assets/send.svg'
 
 function MsgItem(props) {
   const {isSelf, content, time} = props;
@@ -17,15 +20,27 @@ function MsgBubble(props) {
 }
 
 export default function ChatView() {
+  // history msg
+  const historyMessages = useLoaderData();
   const [message, setMessage] = useState('')
   const ref = useRef();
 
-  const [msg, setMsg] = useState([
-    {content: '你好,Hello', time: Date.now(), id: 1, self: false},
-    {content: 'asdfaasdfasdfas1233333333333333333333s', time: Date.now(), id: 2, self: true},
-    {content: 'bafgv', time: Date.now(), id: 3, self: true},
-    {content: 'sadfasdfasfd', time: Date.now(), id: 4, self: false},
-  ])
+  // [
+  //   {content: '你好,Hello', time: Date.now(), id: 1, self: false},
+  //   {content: 'asdfaasdfasdfas1233333333333333333333s', time: Date.now(), id: 2, self: true},
+  //   {content: 'bafgv', time: Date.now(), id: 3, self: true},
+  //   {content: 'sadfasdfasfd', time: Date.now(), id: 4, self: false},
+  // ]
+
+  let id = 0;
+  const [msg, setMsg] = useState(
+    historyMessages.map(item => ({
+      content: item.content,
+      time: item.createAt,
+      id: ++id,
+      self: item.role === 'user'
+    }))
+  )
 
   useEffect(() => {
     console.log('changed', msg.length)
@@ -44,15 +59,20 @@ export default function ChatView() {
       return
     }
     if ((e.type === "keydown" && e.key === 'Enter') || e.type === 'click') {
-      let _msg = [...msg];
-      _msg.push({
-        id: Date.now(),
-        content: message,
-        time: Date.now(),
-        self: true
-      });
-      setMessage('');
-      setMsg(_msg);
+      // send msg
+      SendChatApi(message).then(result => {
+        let _msg = [...msg];
+        _msg.push({
+          id: Date.now(),
+          content: message,
+          time: Date.now(),
+          self: true
+        });
+        setMessage('');
+        setMsg(_msg);
+      }).finally(() => {
+        console.log('send success');
+      })
     }
   }
 
@@ -71,7 +91,9 @@ export default function ChatView() {
           <input className="msg-input" onInput={handleInputContent}
                  onKeyDown={handleSubmit}
                  value={message} />
-          <button className="msg-send-btn" onClick={handleSubmit}>发送</button>
+          <button className="msg-send-btn" onClick={handleSubmit}>
+            <img src={sendBtnImg} alt='send button' />
+          </button>
         </div>
       </div>
     </div>

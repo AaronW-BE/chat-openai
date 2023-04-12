@@ -19,6 +19,10 @@ export default function LoginView() {
 
   // 登录/注册
   const handleAction = () => {
+    if (!formData.username || !formData.password) {
+      alert('用户名或密码无效')
+      return
+    }
     let api;
     if (pageType === 'login') {
       api = LoginApi;
@@ -66,7 +70,7 @@ export default function LoginView() {
         </div>
       </div>
       <div className="form-item">
-        <div className='form-item-label'>密码</div>
+        <div className='form-item-label'>密码：</div>
         <div className="">
           <input name="password" type={"password"} onInput={handleInput} onKeyUp={handleInput} />
         </div>
