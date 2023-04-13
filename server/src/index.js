@@ -1,4 +1,4 @@
-const fastify = require('fastify')({ logger: true })
+const fastify = require('fastify')({ logger: false })
 const cors = require('@fastify/cors');
 const {Configuration, OpenAIApi} = require('openai');
 const config = require('./config');
@@ -47,6 +47,10 @@ fastify.register(
 
 fastify.register(cors, {
   origin: "*", // <- allow request from all domains
+  methods: ["GET", "POST", "PUT", "DELETE", 'OPTIONS'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  exposedHeaders: 'Authorization'
 });
 
 fastify.register(require('@fastify/jwt'), {
@@ -97,7 +101,35 @@ fastify.get('/ping', function (req, res) {
   return this.t("PONG");
 });
 
-fastify.get('/', async (request, reply) => {
+let msgSubscribers = {};
+
+let headers = {
+  "Access-Control-Allow-Origin": '*',
+  "Content-Type": "text/event-stream",
+  "Cache-Control": "no-cache",
+  "Connection": "keep-alive",
+};
+fastify.get("/msg-sub", (request, reply) => {
+
+  reply.raw.writeHead(200, headers)
+  setInterval(() => {
+    reply.raw.write("data:ping\n\n");
+  }, 10000)
+
+  msgSubscribers[request.user.uid] = {
+    reply,
+    uid: request.user.uid,
+    lastMsgId: 0,
+    createAt: Date.now(),
+    send(msg) {
+      console.log("will send to ", this.uid);
+      // this.reply.raw.writeHead(200, headers)
+      reply.raw.write(`event:chat\ndata:${msg}\n\n`);
+    }
+  };
+})
+
+fastify.get('/', async (request, reply, next) => {
   let {text} = request.query;
 
   if (!text) {
@@ -160,11 +192,12 @@ fastify.get('/', async (request, reply) => {
       pool: [ msg ],
       createAt: Date.now(),
     })
-  } else {
-    // append msg to repo
-    messageRepo.pool.push(msg)
-    await messageRepo.save();
   }
+
+  // append msg to repo
+  messageRepo.pool.push(msg)
+  await messageRepo.save()
+  reply.send("success");
 
   // formatted messages
   let formattedMsg = messageRepo.pool.map(msg => ({
@@ -188,9 +221,9 @@ fastify.get('/', async (request, reply) => {
       })
       messageRepo.save();
     }
-    return answer;
-
+    msgSubscribers[request.user.uid].send(text);
   } catch (e) {
+    msgSubscribers[request.user.uid].send("发生错误：" + e.message);
 
     return "error: " + e.message;
   }
