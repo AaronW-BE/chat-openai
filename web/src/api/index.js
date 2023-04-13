@@ -5,7 +5,7 @@ import config from '../config/app';
 
 const instance = axios.create({
   baseURL: config.host,
-  timeout: 5000,
+  timeout: 100000,
   headers: {
     "Content-Type": "application/json"
   }
@@ -30,7 +30,7 @@ instance.interceptors.response.use(
   },
   (error) => {
     console.log('err', error)
-    if (error.response.status === 401) {
+    if (error.response && error.response.status === 401) {
       return redirect("/login");
       // window.location.href = "/login";
     }

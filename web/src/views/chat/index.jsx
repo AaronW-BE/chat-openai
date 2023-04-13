@@ -60,15 +60,25 @@ export default function ChatView() {
     }
     if ((e.type === "keydown" && e.key === 'Enter') || e.type === 'click') {
       // send msg
+      let _msg = [...msg];
+      _msg.push({
+        id: Date.now(),
+        content: message,
+        time: Date.now(),
+        self: true
+      });
+      setMsg(_msg);
+      setMessage('');
+
       SendChatApi(message).then(result => {
-        let _msg = [...msg];
+        _msg = [..._msg];
         _msg.push({
           id: Date.now(),
-          content: message,
+          content: result,
           time: Date.now(),
-          self: true
-        });
-        setMessage('');
+          self: false
+        })
+        console.log('response result', result)
         setMsg(_msg);
       }).finally(() => {
         console.log('send success');
