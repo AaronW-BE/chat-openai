@@ -32,6 +32,12 @@ h1 {
   line-height: 1.1;
 }
 
+input {
+  border: 1px solid #d0d0d0;
+  outline: none;
+  border-inline: none;
+}
+
 input[type="submit"],
 input[type="text"],
 input[type="button"],
@@ -50,7 +56,8 @@ input:focus-visible {
     color: #213547;
     background-color: #ffffff;
   }
-  button {
-    background-color: #f9f9f9;
+
+  .btn, button {
+    background-color: #e1e1e1;
   }
 }

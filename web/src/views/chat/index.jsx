@@ -149,9 +149,9 @@ export default function ChatView() {
           <input className="msg-input" onInput={handleInputContent}
                  onKeyDown={handleSubmit}
                  value={message} />
-          <button className="msg-send-btn" onClick={handleSubmit}>
+          <div className="msg-send-btn" onClick={handleSubmit}>
             <img src={sendBtnImg} alt='send button' />
-          </button>
+          </div>
         </div>
       </div>
     </div>
