@@ -7,6 +7,8 @@ export default function LoginView() {
 
   const [formData, setFormData] = useState({});
 
+  const [processState, setProcessState] = useState(false)
+
   const navigate = useNavigate();
 
   const togglePageType = () => {
@@ -29,6 +31,7 @@ export default function LoginView() {
     } else {
       api = RegisterApi;
     }
+    setProcessState(true)
     api(formData).then(res => {
       if (api === LoginApi) {
         // 登录成功
@@ -41,6 +44,8 @@ export default function LoginView() {
         // 跳转到登录页面
         setPageType('login');
       }
+    }).finally(() => {
+      setProcessState(false)
     });
   }
 
@@ -66,20 +71,20 @@ export default function LoginView() {
       <div className="form-item">
         <div className="form-item-label">用户名：</div>
         <div>
-          <input name="username" onInput={handleInput} />
+          <input disabled={processState} name="username" onInput={handleInput} />
         </div>
       </div>
       <div className="form-item">
         <div className='form-item-label'>密码：</div>
         <div className="">
-          <input name="password" type={"password"} onInput={handleInput} onKeyUp={handleInput} />
+          <input disabled={processState} name="password" type={"password"} onInput={handleInput} onKeyUp={handleInput} />
         </div>
       </div>
       <div className="form-item form-btn-wrp">
         {
           pageType === 'login' ?
-            <button className="btn login-btn" onClick={handleAction}>登录</button> :
-            <button className="btn login-btn" onClick={handleAction}>注册</button>
+            <button disabled={processState} className="btn login-btn" onClick={handleAction}>{processState ? '登陆中' : '登录'}</button> :
+            <button disabled={processState} className="btn login-btn" onClick={handleAction}>{processState ? '注册中' : '注册'}</button>
         }
         <div>
           {
