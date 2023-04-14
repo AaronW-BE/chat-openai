@@ -208,7 +208,7 @@ fastify.get('/', async (request, reply, next) => {
   try {
     const result = await openai.createChatCompletion({
       model: config.APP_WALLE_AI_MODEL,
-      messages: formattedMsg,
+      messages: formattedMsg.splice(-5),
     });
 
     const answer = result.data.choices[0].message.content || "";
@@ -221,7 +221,7 @@ fastify.get('/', async (request, reply, next) => {
       })
       messageRepo.save();
     }
-    msgSubscribers[request.user.uid].send(text);
+    msgSubscribers[request.user.uid].send(answer);
   } catch (e) {
     msgSubscribers[request.user.uid].send("发生错误：" + e.message);
 
