@@ -17,6 +17,7 @@ let dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc');
 const {sha256, sha512} = require("./utils/encryptUtils");
 const path = require("path");
+const {replaceAll} = require("./utils/stringUtils");
 dayjs.extend(utc);
 
 const serverApi = new WeAppServerApi({
@@ -113,7 +114,7 @@ fastify.get("/msg-sub", (request, reply) => {
 
   reply.raw.writeHead(200, headers)
   setInterval(() => {
-    reply.raw.write("data:ping\n\n");
+    reply.raw.write("data: ping\n\n");
   }, 10000)
 
   msgSubscribers[request.user.uid] = {
@@ -122,9 +123,10 @@ fastify.get("/msg-sub", (request, reply) => {
     lastMsgId: 0,
     createAt: Date.now(),
     send(msg) {
-      console.log("will send to ", this.uid);
-      // this.reply.raw.writeHead(200, headers)
-      reply.raw.write(`event:chat\ndata:${msg}\n\n`);
+      let _msg = JSON.stringify(msg);
+      reply.raw.write(`event: chat\n`);
+      reply.raw.write(`data: ${_msg}`);
+      reply.raw.write(`\n\n`);
     }
   };
 })
@@ -133,6 +135,11 @@ fastify.get('/', async (request, reply, next) => {
   let {text} = request.query;
 
   if (!text) {
+    return;
+  }
+
+  if (text === "ping") {
+    msgSubscribers[request.user.uid].send("hello\r\nNew line\n\nNext New Line\n\n");
     return;
   }
 

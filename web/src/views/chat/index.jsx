@@ -89,7 +89,7 @@ export default function ChatView() {
       }
       eventSource.addEventListener('chat', (e) => {
         console.log('[ssd-chat] received msg', e.data)
-        storeMsg(e.data, false)
+        storeMsg(JSON.parse(e.data), false)
       });
     }
     window.addEventListener('beforeunload', function () {
