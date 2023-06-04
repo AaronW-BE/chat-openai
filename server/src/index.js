@@ -1,5 +1,6 @@
 const fastify = require('fastify')({ logger: false })
 const cors = require('@fastify/cors');
+const ws = require("@fastify/websocket");
 const {Configuration, OpenAIApi} = require('openai');
 const config = require('./config');
 const User = require('./models/user');
@@ -68,6 +69,8 @@ fastify.register(require('@fastify/jwt'), {
   },
 })
 
+fastify.register(ws)
+
 const excludeAuth = config.APP_AUTH_WHITELIST
 fastify.addHook("onRequest", async (request, reply) => {
   let skip = false;
@@ -81,6 +84,12 @@ fastify.addHook("onRequest", async (request, reply) => {
   if (skip) return;
 
   try {
+    const {token} = request.query;
+    if (token) {
+      request.headers = {
+        'authorization': "Bearer " + token
+      }
+    }
     await request.jwtVerify();
   } catch (e) {
     console.error(e);
@@ -96,6 +105,7 @@ const start = async () => {
       port: 3000
     });
   } catch (e) {
+    console.log("err", e)
     fastify.log.error(e.message);
     process.exit(1);
   }
@@ -136,6 +146,23 @@ fastify.get("/msg-sub", (request, reply) => {
     }
   };
 })
+
+fastify.register(async function(fastify) {
+  fastify.get("/ws", {websocket: true}, async (conn, req) => {
+    conn.socket.send("123")
+    conn.socket.on('open', message => {
+      console.log('open')
+    })
+
+    conn.socket.on('message', async message => {
+      console.log('msg', message)
+    })
+    conn.socket.on('error', err => {
+      console.log('err', err)
+    })
+  })
+})
+
 
 fastify.get('/', async (request, reply, next) => {
   let {text} = request.query;
