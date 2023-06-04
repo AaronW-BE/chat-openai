@@ -9,6 +9,7 @@ function passwordEncrypt(plain, alg) {
 }
 
 module.exports = {
+  sha1: text => encrypt2hash(text, 'sha1'),
   sha256: text => encrypt2hash(text, 'sha256'),
   sha512: text => encrypt2hash(text, 'sha512'),
   passwordEncrypt

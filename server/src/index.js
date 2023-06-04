@@ -18,12 +18,18 @@ const utc = require('dayjs/plugin/utc');
 const {sha256, sha512} = require("./utils/encryptUtils");
 const path = require("path");
 const {replaceAll} = require("./utils/stringUtils");
+const {TiktokServerApi} = require("./libs/tiktok");
 dayjs.extend(utc);
 
 const serverApi = new WeAppServerApi({
   appId: config.WEAPP_APP_ID,
   appSecret: config.WEAPP_APP_SECRET
 });
+
+const tiktokApi = new TiktokServerApi({
+  appId: config.TIKTOK_APP_ID,
+  appSecret: config.TIKTOK_APP_SECRET
+})
 
 const chatConfiguration = new Configuration({
   apiKey: config.API_KEY,
@@ -365,6 +371,82 @@ fastify.post('/auth/weapp', async (req, rep) => {
   };
 })
 
+fastify.post('/auth/tiktok', async (req, reply) => {
+  const {code, iv, signature, encryptedData} = req.body;
+
+  let session = await tiktokApi.code2session(code);
+
+  const {session_key, openid, anonymous_openid, unionid} = session;
+
+  // get if exists
+  let foundAccount = await ThirdUserAccount.findOne({
+    'platform': 'tiktok',
+    'data.openid': openid
+  })
+
+  let user;
+
+  if (!foundAccount) {
+    // get tt user info
+    if (!tiktokApi.getSignature(encryptedData, session_key) === signature) {
+      reply.statusCode = 500
+      reply.send("data illegal")
+      return;
+    }
+
+    let decryptData = tiktokApi.decryptData(encryptedData, session_key, iv);
+
+    if (!decryptData) {
+      reply.statusCode = 500
+      reply.send("data parse error")
+      return
+    }
+
+    console.log(decryptData.toString("utf8"))
+
+    let ttUserInfo = JSON.parse(decryptData.toString("utf8"));
+
+    // create one if not found
+    let preparedUser = new User({
+      nickname: ttUserInfo.nickName,
+      avatar: ttUserInfo.avatarUrl,
+      gender: ttUserInfo.gender,
+      city: ttUserInfo.city,
+      province: ttUserInfo.province,
+      country: ttUserInfo.country,
+      language: ttUserInfo.language,
+      originFrom: "tiktok",
+      createAt: Date.now(),
+    });
+    user = await preparedUser.save();
+
+    let userThirdAccount = new ThirdUserAccount({
+      user: user._id,
+      platform: 'tiktok',
+      data: {
+        appid: ttUserInfo.watermark.appid,
+        openid,
+        unionid,
+        session_key
+      }
+    });
+    await userThirdAccount.save();
+    foundAccount = userThirdAccount;
+  } else {
+    user = await User.findById(foundAccount.user._id);
+  }
+
+  let token = fastify.jwt.sign({
+    uid: foundAccount.user._id,
+  })
+
+
+  return {
+    token,
+    expire: fastify.jwt.options.sign.expiresIn,
+    leftChatTimes: user.chat.leftTimes
+  };
+})
 
 fastify.post('/auth/common/login', async (req, rep) => {
   const {username, password} = req.body || {};
@@ -411,6 +493,10 @@ fastify.post('/auth/common/register', async (req, rep) => {
   });
   preparedUser.password = password;
   await preparedUser.save();
+})
+
+fastify.post("/chat/exchangeTimes", async (req, reply) => {
+
 })
 
 

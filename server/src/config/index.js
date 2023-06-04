@@ -20,7 +20,10 @@ const schema = {
     MONGO_PORT: { type: "number", default: "27017" },
 
     WEAPP_APP_ID: { type: "string" },
-    WEAPP_APP_SECRET: { type: "string" }
+    WEAPP_APP_SECRET: { type: "string" },
+
+    TIKTOK_APP_ID: { type: "string" },
+    TIKTOK_APP_SECRET: { type: "string" },
   }
 }
 

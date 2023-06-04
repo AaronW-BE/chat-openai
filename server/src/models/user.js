@@ -13,13 +13,26 @@ let schema = {
         return passwordEncrypt(val, "sha256");
       }
     },
+    chat: {
+      type: Object,
+      default: {
+        leftTimes: 50,
+        maxTimes: 50,
+        rechargeTimesRecords: []
+      }
+    },
     nickname: String,
     avatar: String,
+    gender: String,
+    city: String,
+    province: String,
+    country: String,
+    language: String,
+    originFrom: String,
     createAt: {
       type: Date,
       default: Date.now
     },
-    originFrom: String,
   }),
 }
 
