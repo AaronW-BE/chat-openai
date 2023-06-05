@@ -1,4 +1,5 @@
 const fastify = require('fastify')({ logger: false })
+const uuid = require('uuid');
 const cors = require('@fastify/cors');
 const ws = require("@fastify/websocket");
 const {Configuration, OpenAIApi} = require('openai');
@@ -522,7 +523,19 @@ fastify.post('/auth/common/register', async (req, rep) => {
   await preparedUser.save();
 })
 
-fastify.post("/chat/exchangeTimes", async (req, reply) => {
+
+// apply video ad key
+fastify.post("/marketing/videoAd/apply", async (req, reply) => {
+  const {videoAdId, startTime, nonceStr} = req.body;
+
+  const requestTime = Date.now();
+  const randomStr = uuid.v4()
+
+  // generate key
+
+})
+
+fastify.post("/marketing/videoAd/exchangeChatTimes", async (req, reply) => {
 
 })
 
