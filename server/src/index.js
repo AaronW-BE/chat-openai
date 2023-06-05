@@ -150,13 +150,30 @@ fastify.get("/msg-sub", (request, reply) => {
 
 fastify.register(async function(fastify) {
   fastify.get("/ws", {websocket: true}, async (conn, req) => {
-    conn.socket.send("123")
-    conn.socket.on('open', message => {
-      console.log('open')
-    })
-
     conn.socket.on('message', async message => {
-      console.log('msg', message)
+      let msg = String(message);
+      try {
+        let msgObj = JSON.parse(msg);
+        let {type, content, time, msgId} = msgObj;
+        if (type === 'chat' && msgId) {
+          setTimeout(() => {
+            conn.socket.send(JSON.stringify({
+              type: 'chat-ack',
+              msgId,
+              confirm: 1
+            }))
+
+            // send by wall-e
+            conn.socket.send(JSON.stringify({
+              type: 'chat',
+              msgId: uuid.v4(),
+              content: "Hi, 我是瓦力，我正在学习中，请稍后再试: " + content
+            }))
+          }, 1500)
+        }
+      } catch (e) {
+        console.log('process msg err ', e)
+      }
     })
     conn.socket.on('error', err => {
       console.log('err', err)

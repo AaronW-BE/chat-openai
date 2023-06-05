@@ -44,7 +44,13 @@ export default function LoginView() {
         // 跳转到登录页面
         setPageType('login');
       }
-    }).finally(() => {
+    })
+      .catch(e => {
+        if (e.response && e.response.data) {
+          window.alert(e.response.data.message);
+        }
+      })
+      .finally(() => {
       setProcessState(false)
     });
   }
