@@ -494,6 +494,10 @@ fastify.post('/auth/tiktok', async (req, reply) => {
   let user;
 
   if (!foundAccount) {
+    if (!signature || !encryptedData || !iv) {
+      // just login, throw error while not found any user
+      return reply.status(401).send("not register")
+    }
     // get tt user info
     if (!tiktokApi.getSignature(encryptedData, session_key) === signature) {
       reply.statusCode = 500
@@ -551,7 +555,8 @@ fastify.post('/auth/tiktok', async (req, reply) => {
   return {
     token,
     expire: fastify.jwt.options.sign.expiresIn,
-    leftChatTimes: user.chat.leftTimes
+    leftChatTimes: user.chat.leftTimes,
+    profile: user
   };
 })
 
