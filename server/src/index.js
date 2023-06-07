@@ -17,7 +17,7 @@ const {Types} = require('mongoose')
 
 let dayjs = require('dayjs')
 const utc = require('dayjs/plugin/utc');
-const {sha256, sha512} = require("./utils/encryptUtils");
+const {sha256, sha1} = require("./utils/encryptUtils");
 const path = require("path");
 const {replaceAll} = require("./utils/stringUtils");
 const {TiktokServerApi} = require("./libs/tiktok");
@@ -156,27 +156,89 @@ fastify.register(async function(fastify) {
         let msgObj = JSON.parse(msg);
         let {type, content, time, msgId} = msgObj;
         if (type === 'chat' && msgId) {
-          setTimeout(() => {
+
+          // save msg to db
+          // get history messages
+          let messageRepo = await Message.findOne({
+            from: req.user.uid,
+            to: "assistant"
+          });
+
+          // meg pack
+          let msg = {
+            role: "user",
+            content: content,
+            createAt: Date.now()
+          };
+
+          if (!messageRepo) {
+            messageRepo = await Message.create({
+              from: req.user.uid,
+              to: "assistant",
+              pool: [ msg ],
+              createAt: Date.now(),
+            })
+          }
+
+          // append msg to repo
+          messageRepo.pool.push(msg)
+          messageRepo.save().then(() => {
             conn.socket.send(JSON.stringify({
               type: 'chat-ack',
               msgId,
               confirm: 1
             }))
+          })
 
-            // send by wall-e
+          // send by wall-e
+          // formatted messages
+          let formattedMsg = messageRepo.pool.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          }));
+
+          try {
+            const result = await openai.createChatCompletion({
+              model: config.APP_WALLE_AI_MODEL,
+              messages: formattedMsg.splice(-5),
+            });
+
+            const answer = result.data.choices[0].message.content || "";
+
+            if (answer) {
+              messageRepo.pool.push({
+                role: "assistant",
+                content: answer,
+                createAt: Date.now()
+              })
+              messageRepo.save().then(() => {
+                conn.socket.send(JSON.stringify({
+                  type: 'chat',
+                  msgId: uuid.v4(),
+                  content: answer
+                }))
+              })
+            }
+          } catch (e) {
             conn.socket.send(JSON.stringify({
-              type: 'chat',
+              type: 'system',
               msgId: uuid.v4(),
-              content: "Hi, 我是瓦力，我正在学习中，请稍后再试: " + content
+              content: "系统出现问题，请稍后再试"
             }))
-          }, 1500)
+            console.log("openai response error", e)
+          }
         }
       } catch (e) {
         console.log('process msg err ', e)
+        conn.socket.send(JSON.stringify({
+          type: 'system',
+          msgId: uuid.v4(),
+          content: "处理消息出现问题，请稍后再试"
+        }))
       }
     })
     conn.socket.on('error', err => {
-      console.log('err', err)
+      console.log('socket error: ', err)
     })
   })
 })
@@ -542,18 +604,51 @@ fastify.post('/auth/common/register', async (req, rep) => {
 
 
 // apply video ad key
+let adKeys = {}
 fastify.post("/marketing/videoAd/apply", async (req, reply) => {
-  const {videoAdId, startTime, nonceStr} = req.body;
+  const {videoAdId, nonceStr} = req.body;
 
   const requestTime = Date.now();
   const randomStr = uuid.v4()
 
-  // generate key
+  const adKey = sha1(req.user.uid + videoAdId + nonceStr + randomStr);
+  if (!adKeys[adKey]){
+    adKeys[adKey] = {
+      requestTime,
+      nonceStr,
+      videoAdId,
+      uid: req.user.uid,
+      randomStr
+    }
+  } else if (Date.now() - adKeys[adKey].requestTime > 10 * 1000) {
+    return reply.status(403).send("error for request ad key")
+  }
 
+  return {key: adKey}
 })
 
 fastify.post("/marketing/videoAd/exchangeChatTimes", async (req, reply) => {
+  const {key, videoAdId} = req.body;
+  if (!adKeys[key]) {
+    return reply.status(403).send("key invalid")
+  }
 
+  let addTimes = 10
+  let user = await User.findById(new Types.ObjectId(req.user.uid))
+  user.chat.leftTimes += addTimes
+  user.chat.rechargeTimesRecords.push({
+    time: new Date(),
+    adUnitId: adKeys[key].videoAdId,
+    addTimes,
+    duration: Date.now() - adKeys[key].requestTime
+  })
+
+  user.markModified("chat")
+  await user.save();
+  delete adKeys[key]
+  return reply.send({
+    leftTimes: user.chat.leftTimes
+  })
 })
 
 
